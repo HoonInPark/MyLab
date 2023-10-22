@@ -2,7 +2,7 @@
 
 #pragma once
 
-#include "CoreMinimal.h"
+#include "MyLab.h"
 #include "GameFramework/PlayerController.h"
 #include "MyLabPlayerController.generated.h"
 

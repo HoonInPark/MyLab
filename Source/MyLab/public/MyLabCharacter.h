@@ -2,7 +2,7 @@
 
 #pragma once
 
-#include "CoreMinimal.h"
+#include "MyLab.h"
 #include "GameFramework/Character.h"
 #include "Logging/LogMacros.h"
 #include "MyLabCharacter.generated.h"
@@ -40,7 +40,7 @@ class AMyLabCharacter : public ACharacter
 	/** Move Input Action */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Input, meta=(AllowPrivateAccess = "true"))
 	UInputAction* MoveAction;
-	
+
 public:
 	AMyLabCharacter();
 
@@ -48,7 +48,6 @@ protected:
 	virtual void BeginPlay();
 
 public:
-		
 	/** Look Input Action */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	class UInputAction* LookAction;
@@ -83,5 +82,14 @@ public:
 	/** Returns FirstPersonCameraComponent subobject **/
 	UCameraComponent* GetFirstPersonCameraComponent() const { return FirstPersonCameraComponent; }
 
-};
+#pragma region _01_SearchDifferentTypes
 
+protected:
+	void SearchDiffTypes(const FInputActionValue& Value);
+
+private:
+	/** Search Input Action */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Input, meta=(AllowPrivateAccess = "true"))
+	UInputAction* SearchAction;
+#pragma endregion _01_SearchDifferentTypes
+};

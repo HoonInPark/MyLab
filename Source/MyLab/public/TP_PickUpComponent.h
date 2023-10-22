@@ -2,7 +2,7 @@
 
 #pragma once
 
-#include "CoreMinimal.h"
+#include "MyLab.h"
 #include "Components/SphereComponent.h"
 #include "MyLabCharacter.h"
 #include "TP_PickUpComponent.generated.h"

@@ -73,13 +73,15 @@ void AMyLabCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComp
 
 		// Looking
 		EnhancedInputComponent->BindAction(LookAction, ETriggerEvent::Triggered, this, &AMyLabCharacter::Look);
+
+		// SearchDifferentTypes
+		EnhancedInputComponent->BindAction(SearchAction, ETriggerEvent::Triggered, this, &AMyLabCharacter::SearchDiffTypes);
 	}
 	else
 	{
 		UE_LOG(LogTemplateCharacter, Error, TEXT("'%s' Failed to find an Enhanced Input Component! This template is built to use the Enhanced Input system. If you intend to use the legacy system, then you will need to update this C++ file."), *GetNameSafe(this));
 	}
 }
-
 
 void AMyLabCharacter::Move(const FInputActionValue& Value)
 {
@@ -116,3 +118,10 @@ bool AMyLabCharacter::GetHasRifle()
 {
 	return bHasRifle;
 }
+
+#pragma region _01_SearchDifferentTypes
+void AMyLabCharacter::SearchDiffTypes(const FInputActionValue& Value)
+{
+}
+#pragma endregion _01_SearchDifferentTypes
+

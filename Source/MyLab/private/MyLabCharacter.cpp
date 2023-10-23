@@ -1,7 +1,8 @@
 // Copyright Epic Games, Inc. All Rights Reserved.
 
 #include "MyLabCharacter.h"
-#include "MyLabProjectile.h"
+
+#include "EngineUtils.h"
 #include "Animation/AnimInstance.h"
 #include "Camera/CameraComponent.h"
 #include "Components/CapsuleComponent.h"
@@ -10,6 +11,7 @@
 #include "EnhancedInputSubsystems.h"
 #include "InputActionValue.h"
 #include "Engine/LocalPlayer.h"
+#include "Engine/StaticMeshActor.h"
 
 DEFINE_LOG_CATEGORY(LogTemplateCharacter);
 
@@ -20,10 +22,10 @@ AMyLabCharacter::AMyLabCharacter()
 {
 	// Character doesnt have a rifle at start
 	bHasRifle = false;
-	
+
 	// Set size for collision capsule
 	GetCapsuleComponent()->InitCapsuleSize(55.f, 96.0f);
-		
+
 	// Create a CameraComponent	
 	FirstPersonCameraComponent = CreateDefaultSubobject<UCameraComponent>(TEXT("FirstPersonCamera"));
 	FirstPersonCameraComponent->SetupAttachment(GetCapsuleComponent());
@@ -38,7 +40,6 @@ AMyLabCharacter::AMyLabCharacter()
 	Mesh1P->CastShadow = false;
 	//Mesh1P->SetRelativeRotation(FRotator(0.9f, -19.19f, 5.2f));
 	Mesh1P->SetRelativeLocation(FVector(-30.f, 0.f, -150.f));
-
 }
 
 void AMyLabCharacter::BeginPlay()
@@ -49,12 +50,12 @@ void AMyLabCharacter::BeginPlay()
 	// Add Input Mapping Context
 	if (APlayerController* PlayerController = Cast<APlayerController>(Controller))
 	{
-		if (UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(PlayerController->GetLocalPlayer()))
+		if (UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<
+			UEnhancedInputLocalPlayerSubsystem>(PlayerController->GetLocalPlayer()))
 		{
 			Subsystem->AddMappingContext(DefaultMappingContext, 0);
 		}
 	}
-
 }
 
 //////////////////////////////////////////////////////////////////////////// Input
@@ -75,18 +76,21 @@ void AMyLabCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComp
 		EnhancedInputComponent->BindAction(LookAction, ETriggerEvent::Triggered, this, &AMyLabCharacter::Look);
 
 		// SearchDifferentTypes
-		EnhancedInputComponent->BindAction(SearchAction, ETriggerEvent::Triggered, this, &AMyLabCharacter::SearchDiffTypes);
+		EnhancedInputComponent->BindAction(SearchAction, ETriggerEvent::Triggered, this, &AMyLabCharacter::SearchActor);
 	}
 	else
 	{
-		UE_LOG(LogTemplateCharacter, Error, TEXT("'%s' Failed to find an Enhanced Input Component! This template is built to use the Enhanced Input system. If you intend to use the legacy system, then you will need to update this C++ file."), *GetNameSafe(this));
+		UE_LOG(LogTemplateCharacter, Error,
+		       TEXT(
+			       "'%s' Failed to find an Enhanced Input Component! This template is built to use the Enhanced Input system. If you intend to use the legacy system, then you will need to update this C++ file."
+		       ), *GetNameSafe(this));
 	}
 }
 
 void AMyLabCharacter::Move(const FInputActionValue& Value)
 {
 	// input is a Vector2D
-	FVector2D MovementVector = Value.Get<FVector2D>();
+	const FVector2D MovementVector = Value.Get<FVector2D>();
 
 	if (Controller != nullptr)
 	{
@@ -120,8 +124,25 @@ bool AMyLabCharacter::GetHasRifle()
 }
 
 #pragma region _01_SearchDifferentTypes
-void AMyLabCharacter::SearchDiffTypes(const FInputActionValue& Value)
+auto AMyLabCharacter::SearchActor(const FInputActionValue& Value) -> void
 {
+	if (const auto pWorld = GetWorld())
+	{
+		for (const auto& ActorIter : FActorRange(pWorld))
+		{
+			if (const auto SM_Actor_temp = Cast<AStaticMeshActor>(ActorIter))
+			{
+				UStaticMeshComponent* SM_Comp_temp = SM_Actor_temp->GetStaticMeshComponent();
+				if (ActorIter->ActorHasTag(TEXT("Equipment")))
+					SM_Comp_temp->SetOverlayMaterial(Mat_Overlay);
+				else
+				{
+					for (int32 i = 0; i < SM_Comp_temp->GetMaterials().Num(); i++)
+						SM_Comp_temp->SetMaterial(i, Mat_TransParent);
+				}
+			}
+		}
+	}
 }
-#pragma endregion _01_SearchDifferentTypes
 
+#pragma endregion _01_SearchDifferentTypes

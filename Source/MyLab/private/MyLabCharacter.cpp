@@ -56,6 +56,20 @@ void AMyLabCharacter::BeginPlay()
 			Subsystem->AddMappingContext(DefaultMappingContext, 0);
 		}
 	}
+
+#pragma region _01_SearchDifferentTypes
+	if (const auto pWorld = GetWorld())
+	{
+		for (const auto& ActorIter : FActorRange(pWorld))
+		{
+			if (const auto SM_Actor_temp = Cast<AStaticMeshActor>(ActorIter))
+			{
+				const auto SM_Comp_temp = SM_Actor_temp->GetStaticMeshComponent();
+				MapOfActors.Add(ActorIter, {SM_Comp_temp, SM_Comp_temp->GetMaterials()});
+			}
+		}
+	}
+#pragma endregion _01_SearchDifferentTypes
 }
 
 //////////////////////////////////////////////////////////////////////////// Input
@@ -126,22 +140,14 @@ bool AMyLabCharacter::GetHasRifle()
 #pragma region _01_SearchDifferentTypes
 auto AMyLabCharacter::SearchActor(const FInputActionValue& Value) -> void
 {
-	if (const auto pWorld = GetWorld())
+	for (auto Iter = MapOfActors.CreateConstIterator(); Iter; ++Iter)
 	{
-		for (const auto& ActorIter : FActorRange(pWorld))
-		{
-			if (const auto SM_Actor_temp = Cast<AStaticMeshActor>(ActorIter))
-			{
-				UStaticMeshComponent* SM_Comp_temp = SM_Actor_temp->GetStaticMeshComponent();
-				if (ActorIter->ActorHasTag(TEXT("Equipment")))
-					SM_Comp_temp->SetOverlayMaterial(Mat_Overlay);
-				else
-				{
-					for (int32 i = 0; i < SM_Comp_temp->GetMaterials().Num(); i++)
-						SM_Comp_temp->SetMaterial(i, Mat_TransParent);
-				}
-			}
-		}
+		if (Iter.Key()->ActorHasTag(TEXT("Equipment")))
+			Iter.Value().SM_Comp->SetOverlayMaterial(Mat_Overlay);
+		else
+			for (int32 i = 0; i < Iter.Value().SM_Comp->GetMaterials().Num(); ++i)
+				Iter.Value().SM_Comp->SetMaterial(i, Mat_TransParent);
+		
 	}
 }
 

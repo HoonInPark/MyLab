@@ -6,12 +6,24 @@
 #include "GameFramework/Character.h"
 #include "MyLabCharacter.generated.h"
 
+struct FInputActionValue;
+struct FMaterialStruct;
 class UInputComponent;
 class USkeletalMeshComponent;
 class UCameraComponent;
 class UInputAction;
 class UInputMappingContext;
-struct FInputActionValue;
+
+USTRUCT(Atomic, BlueprintType)
+struct FMaterialStruct
+{
+	GENERATED_BODY()
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UStaticMeshComponent* SM_Comp;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TArray<UMaterialInterface*> Material;
+};
 
 DECLARE_LOG_CATEGORY_EXTERN(LogTemplateCharacter, Log, All);
 
@@ -83,8 +95,7 @@ public:
 
 #pragma region _01_SearchDifferentTypes
 /**
- * 액터를 검색할 건데, 그 액터가 AStaticMeshActor일 수도 있고 AGroupActor 혹은 AActor일 수도 있는 상황.
- * 이 모든 것을 한번의 검색으로 해결할 수 있는 방법을 찾아보는 게 목표.
+ * 
  */
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=Material)
@@ -100,5 +111,9 @@ private:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Input, meta=(AllowPrivateAccess = "true"))
 	UInputAction* SearchAction;
 
-#pragma endregion _01_SearchDifferentTypes
+private:
+	UPROPERTY()
+	TMap<AActor*, FMaterialStruct> MapOfActors;
 };
+
+#pragma endregion _01_SearchDifferentTypes

@@ -40,6 +40,8 @@ AMyLabCharacter::AMyLabCharacter()
 	Mesh1P->CastShadow = false;
 	//Mesh1P->SetRelativeRotation(FRotator(0.9f, -19.19f, 5.2f));
 	Mesh1P->SetRelativeLocation(FVector(-30.f, 0.f, -150.f));
+
+	bIsMatAlreadyChanged = false;
 }
 
 void AMyLabCharacter::BeginPlay()
@@ -60,12 +62,12 @@ void AMyLabCharacter::BeginPlay()
 #pragma region _01_SearchDifferentTypes
 	if (const auto pWorld = GetWorld())
 	{
-		for (const auto& ActorIter : FActorRange(pWorld))
+		for (const auto& ActorRange : FActorRange(pWorld))
 		{
-			if (const auto SM_Actor_temp = Cast<AStaticMeshActor>(ActorIter))
+			if (const auto SM_Actor_temp = Cast<AStaticMeshActor>(ActorRange))
 			{
 				const auto SM_Comp_temp = SM_Actor_temp->GetStaticMeshComponent();
-				MapOfActors.Add(ActorIter, {SM_Comp_temp, SM_Comp_temp->GetMaterials()});
+				MapOfActors.Add(ActorRange, {SM_Comp_temp, SM_Comp_temp->GetMaterials()});
 			}
 		}
 	}
@@ -143,12 +145,22 @@ auto AMyLabCharacter::SearchActor(const FInputActionValue& Value) -> void
 	for (auto Iter = MapOfActors.CreateConstIterator(); Iter; ++Iter)
 	{
 		if (Iter.Key()->ActorHasTag(TEXT("Equipment")))
-			Iter.Value().SM_Comp->SetOverlayMaterial(Mat_Overlay);
-		else
+			if (!bIsMatAlreadyChanged)
+				Iter.Value().SM_Comp->SetOverlayMaterial(Mat_Overlay);
+			else
+				Iter.Value().SM_Comp->SetOverlayMaterial(nullptr);
+		else if (!bIsMatAlreadyChanged)
 			for (int32 i = 0; i < Iter.Value().SM_Comp->GetMaterials().Num(); ++i)
 				Iter.Value().SM_Comp->SetMaterial(i, Mat_TransParent);
-		
+		else
+			for (int32 i = 0; i < Iter.Value().SM_Comp->GetMaterials().Num(); ++i)
+				Iter.Value().SM_Comp->SetMaterial(i, Iter.Value().Materials[i]);
 	}
-}
 
+	bIsMatAlreadyChanged = !bIsMatAlreadyChanged;
+}
 #pragma endregion _01_SearchDifferentTypes
+
+#pragma region _02_ParseHierarchy
+
+#pragma endregion _02_ParseHierarchy

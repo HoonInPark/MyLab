@@ -22,7 +22,7 @@ struct FMaterialStruct
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	UStaticMeshComponent* SM_Comp;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	TArray<UMaterialInterface*> Material;
+	TArray<UMaterialInterface*> Materials;
 };
 
 DECLARE_LOG_CATEGORY_EXTERN(LogTemplateCharacter, Log, All);
@@ -98,6 +98,9 @@ public:
  * 
  */
 public:
+	UPROPERTY()
+	bool bIsMatAlreadyChanged;
+	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=Material)
 	UMaterialInstance* Mat_Overlay;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=Material)
@@ -114,6 +117,11 @@ private:
 private:
 	UPROPERTY()
 	TMap<AActor*, FMaterialStruct> MapOfActors;
-};
-
 #pragma endregion _01_SearchDifferentTypes
+
+#pragma region _02_ParseHierarchy
+	/**
+	 * Equipment 태그가 달린 녀석들만 수집해서 
+	 */
+#pragma endregion _02_ParseHierarchy
+};

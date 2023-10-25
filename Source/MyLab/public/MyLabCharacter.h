@@ -133,6 +133,30 @@ private:
 	 *
 	 * 일단 예제로 만든 Per 레벨에 속한 SM_ChamferCube1는 하위로 2와 3을 두고 있고,
 	 * 3이 하위로 4를 두고 있다고 해보고 계통도 로직을 초기화해 보자.
+{
+  "Actors": [
+	{
+	  "Name": "SM_ChamferCube1",
+	  "UpperObject": null,
+	  "LowerObject": ["SM_ChamferCube2", "SM_ChamferCube3"]
+	},
+	{
+	  "Name": "SM_ChamferCube2",
+	  "UpperObject": ["SM_ChamferCube1"],
+	  "LowerObject": [null]
+	},
+	{
+	  "Name": "SM_ChamferCube3",
+	  "UpperObject": ["SM_ChamferCube1"],
+	  "LowerObject": ["SM_ChamferCube4”]
+	},
+	{
+	  "Name":"SM_ChamferCube4",
+		  "UpperObject":["SM_ChamferCube3”],
+		  "LowerObject":[null]
+	 }
+   ]
+}
 	 */
 	UPROPERTY()
 	TMap<AActor*, FMaterialStruct> MapOfActors;

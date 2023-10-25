@@ -50,7 +50,7 @@ void AMyLabCharacter::BeginPlay()
 	Super::BeginPlay();
 
 	// Add Input Mapping Context
-	if (APlayerController* PlayerController = Cast<APlayerController>(Controller))
+	if (const APlayerController* PlayerController = Cast<APlayerController>(Controller))
 	{
 		if (UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<
 			UEnhancedInputLocalPlayerSubsystem>(PlayerController->GetLocalPlayer()))
@@ -119,7 +119,7 @@ void AMyLabCharacter::Move(const FInputActionValue& Value)
 void AMyLabCharacter::Look(const FInputActionValue& Value)
 {
 	// input is a Vector2D
-	FVector2D LookAxisVector = Value.Get<FVector2D>();
+	const FVector2D LookAxisVector = Value.Get<FVector2D>();
 
 	if (Controller != nullptr)
 	{
@@ -159,8 +159,21 @@ auto AMyLabCharacter::SearchActor(const FInputActionValue& Value) -> void
 
 	bIsMatAlreadyChanged = !bIsMatAlreadyChanged;
 }
+
 #pragma endregion _01_SearchDifferentTypes
 
 #pragma region _02_ParseHierarchy
-
+void AMyLabCharacter::MakeHierarchy(FString _ActorNameOrLabel, TArray<AActor*> _UpperActors,
+                                    TArray<AActor*> _LowerActors)
+{
+	TMap<AActor*, FHierarchyActors>& MapOfHierarchy_temp = MapOfHierarchy;
+	const FHierarchyActors HierarchyActors = {_UpperActors, _LowerActors};
+	if (const auto pWorld = GetWorld())
+	{
+		for (TActorIterator<AStaticMeshActor> Iter(pWorld); Iter && Iter->ActorHasTag(TEXT("Equipment")) &&
+		     _ActorNameOrLabel == Iter->GetActorNameOrLabel(); ++Iter)
+		{
+		}
+	}
+}
 #pragma endregion _02_ParseHierarchy

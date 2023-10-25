@@ -14,11 +14,24 @@ class UCameraComponent;
 class UInputAction;
 class UInputMappingContext;
 
+
+USTRUCT(Atomic, BlueprintType)
+struct FHierarchyActors
+{
+	GENERATED_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TArray<AActor*> UpperActors;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TArray<AActor*> LowerActors;
+};
+
+
 USTRUCT(Atomic, BlueprintType)
 struct FMaterialStruct
 {
 	GENERATED_BODY()
-	
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	UStaticMeshComponent* SM_Comp;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
@@ -93,35 +106,46 @@ public:
 	/** Returns FirstPersonCameraComponent subobject **/
 	UCameraComponent* GetFirstPersonCameraComponent() const { return FirstPersonCameraComponent; }
 
+	/**
+	 * 
+	 */
 #pragma region _01_SearchDifferentTypes
-/**
- * 
- */
+
 public:
 	UPROPERTY()
 	bool bIsMatAlreadyChanged;
-	
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=Material)
 	UMaterialInstance* Mat_Overlay;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=Material)
 	UMaterialInstance* Mat_TransParent;
-	
-protected:
-	void SearchActor(const FInputActionValue& Value);
 
 private:
 	/** Search Input Action */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Input, meta=(AllowPrivateAccess = "true"))
 	UInputAction* SearchAction;
 
-private:
+#pragma endregion _01_SearchDifferentTypes
+	/**
+	 * Equipment 태그가 달린 녀석들만 수집해서 동적으로 TMap 생성.
+	 * 수동으로 하나하나 TMap에 넣는 방법은 다음과 같은 에러 메시지와 함께 안된다.
+	 * Illegal TEXT reference to a private object in external package
+	 *
+	 * 일단 예제로 만든 Per 레벨에 속한 SM_ChamferCube1는 하위로 2와 3을 두고 있고,
+	 * 3이 하위로 4를 두고 있다고 해보고 계통도 로직을 초기화해 보자.
+	 */
 	UPROPERTY()
 	TMap<AActor*, FMaterialStruct> MapOfActors;
-#pragma endregion _01_SearchDifferentTypes
 
+protected:
+	void SearchActor(const FInputActionValue& Value);
 #pragma region _02_ParseHierarchy
-	/**
-	 * Equipment 태그가 달린 녀석들만 수집해서 
-	 */
+
+public:
+	UPROPERTY()
+	TMap<AActor*, FHierarchyActors> MapOfHierarchy;
+
+	UFUNCTION(BlueprintCallable, Category=Hierarchy)
+	void MakeHierarchy(FString _ActorNameOrLabel, TArray<AActor*> _UpperActors, TArray<AActor*> _LowerActors);
 #pragma endregion _02_ParseHierarchy
 };

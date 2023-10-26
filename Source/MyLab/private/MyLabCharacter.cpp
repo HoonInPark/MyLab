@@ -93,6 +93,10 @@ void AMyLabCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComp
 
 		// SearchDifferentTypes
 		EnhancedInputComponent->BindAction(SearchAction, ETriggerEvent::Triggered, this, &AMyLabCharacter::SearchActor);
+
+		// ShowHierarchy
+		EnhancedInputComponent->BindAction(ShowHierarchy, ETriggerEvent::Triggered, this, &AMyLabCharacter::SearchActor);
+		EnhancedInputComponent->BindAction(ShowHierarchy, ETriggerEvent::Triggered, this, &AMyLabCharacter::SearchActor);
 	}
 	else
 	{
@@ -159,21 +163,8 @@ auto AMyLabCharacter::SearchActor(const FInputActionValue& Value) -> void
 
 	bIsMatAlreadyChanged = !bIsMatAlreadyChanged;
 }
-
 #pragma endregion _01_SearchDifferentTypes
 
 #pragma region _02_ParseHierarchy
-void AMyLabCharacter::MakeHierarchy(FString _ActorNameOrLabel, TArray<AActor*> _UpperActors,
-                                    TArray<AActor*> _LowerActors)
-{
-	TMap<AActor*, FHierarchyActors>& MapOfHierarchy_temp = MapOfHierarchy;
-	const FHierarchyActors HierarchyActors = {_UpperActors, _LowerActors};
-	if (const auto pWorld = GetWorld())
-	{
-		for (TActorIterator<AStaticMeshActor> Iter(pWorld); Iter && Iter->ActorHasTag(TEXT("Equipment")) &&
-		     _ActorNameOrLabel == Iter->GetActorNameOrLabel(); ++Iter)
-		{
-		}
-	}
-}
+	
 #pragma endregion _02_ParseHierarchy

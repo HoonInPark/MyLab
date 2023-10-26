@@ -14,27 +14,29 @@ class UCameraComponent;
 class UInputAction;
 class UInputMappingContext;
 
-
-USTRUCT(Atomic, BlueprintType)
-struct FHierarchyActors
+USTRUCT(BlueprintType)
+struct FAbsorptionChillerHeater
 {
 	GENERATED_BODY()
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	TArray<AActor*> UpperActors;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	TArray<AActor*> LowerActors;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=Hierarchy)
+	TMap<TSoftObjectPtr<AActor>, FName> coolingWaterSupplyLineGroup;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=Hierarchy)
+	TMap<TSoftObjectPtr<AActor>, FName> coolingWaterReturnLineGroup;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=Hierarchy)
+	TMap<TSoftObjectPtr<AActor>, FName> chilledWaterSupplyLineGroup;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=Hierarchy)
+	TMap<TSoftObjectPtr<AActor>, FName> chilledWaterReturnLineGroup;
 };
-
 
 USTRUCT(Atomic, BlueprintType)
 struct FMaterialStruct
 {
 	GENERATED_BODY()
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	UStaticMeshComponent* SM_Comp;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	TArray<UMaterialInterface*> Materials;
 };
 
@@ -124,52 +126,22 @@ private:
 	/** Search Input Action */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Input, meta=(AllowPrivateAccess = "true"))
 	UInputAction* SearchAction;
-
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Input, meta=(AllowPrivateAccess = "true"))
+	UInputAction* ShowHierarchy;
+	
 #pragma endregion _01_SearchDifferentTypes
-	/**
-	 * Equipment 태그가 달린 녀석들만 수집해서 동적으로 TMap 생성.
-	 * 수동으로 하나하나 TMap에 넣는 방법은 다음과 같은 에러 메시지와 함께 안된다.
-	 * Illegal TEXT reference to a private object in external package
-	 *
-	 * 일단 예제로 만든 Per 레벨에 속한 SM_ChamferCube1는 하위로 2와 3을 두고 있고,
-	 * 3이 하위로 4를 두고 있다고 해보고 계통도 로직을 초기화해 보자.
-{
-  "Actors": [
-	{
-	  "Name": "SM_ChamferCube1",
-	  "UpperObject": null,
-	  "LowerObject": ["SM_ChamferCube2", "SM_ChamferCube3"]
-	},
-	{
-	  "Name": "SM_ChamferCube2",
-	  "UpperObject": ["SM_ChamferCube1"],
-	  "LowerObject": [null]
-	},
-	{
-	  "Name": "SM_ChamferCube3",
-	  "UpperObject": ["SM_ChamferCube1"],
-	  "LowerObject": ["SM_ChamferCube4”]
-	},
-	{
-	  "Name":"SM_ChamferCube4",
-		  "UpperObject":["SM_ChamferCube3”],
-		  "LowerObject":[null]
-	 }
-   ]
-}
-	 */
 	UPROPERTY()
 	TMap<AActor*, FMaterialStruct> MapOfActors;
 
 protected:
 	void SearchActor(const FInputActionValue& Value);
+	
 #pragma region _02_ParseHierarchy
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=Hierarchy)
+	FAbsorptionChillerHeater AbsorptionChillerHeater_1;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=Hierarchy)
+	FAbsorptionChillerHeater AbsorptionChillerHeater_2;
 
-public:
-	UPROPERTY()
-	TMap<AActor*, FHierarchyActors> MapOfHierarchy;
-
-	UFUNCTION(BlueprintCallable, Category=Hierarchy)
-	void MakeHierarchy(FString _ActorNameOrLabel, TArray<AActor*> _UpperActors, TArray<AActor*> _LowerActors);
+	
 #pragma endregion _02_ParseHierarchy
 };

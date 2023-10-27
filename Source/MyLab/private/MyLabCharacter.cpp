@@ -95,8 +95,8 @@ void AMyLabCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComp
 		EnhancedInputComponent->BindAction(SearchAction, ETriggerEvent::Triggered, this, &AMyLabCharacter::SearchActor);
 
 		// ShowHierarchy
-		EnhancedInputComponent->BindAction(ShowHierarchy, ETriggerEvent::Triggered, this, &AMyLabCharacter::SearchActor);
-		EnhancedInputComponent->BindAction(ShowHierarchy, ETriggerEvent::Triggered, this, &AMyLabCharacter::SearchActor);
+		EnhancedInputComponent->BindAction(ShowHierarchy_1, ETriggerEvent::Triggered, this, &AMyLabCharacter::ShowHierarchy_01);
+		EnhancedInputComponent->BindAction(ShowHierarchy_2, ETriggerEvent::Triggered, this, &AMyLabCharacter::ShowHierarchy_02);
 	}
 	else
 	{
@@ -166,5 +166,25 @@ auto AMyLabCharacter::SearchActor(const FInputActionValue& Value) -> void
 #pragma endregion _01_SearchDifferentTypes
 
 #pragma region _02_ParseHierarchy
-	
+auto AMyLabCharacter::ShowHierarchy_01(const FInputActionValue& Value) -> void
+{
+	ShowHierarchy(EHierarchyType::HIERARCHY_1);
+}
+
+auto AMyLabCharacter::ShowHierarchy_02(const FInputActionValue& Value) -> void
+{
+	ShowHierarchy(EHierarchyType::HIERARCHY_2);
+}
+
+void AMyLabCharacter::ShowHierarchy(EHierarchyType _HierarchyType)
+{
+	switch (_HierarchyType)
+	{
+	case EHierarchyType::HIERARCHY_1:
+		break;
+	case EHierarchyType::HIERARCHY_2:
+		break;
+	default: ;
+	}
+}
 #pragma endregion _02_ParseHierarchy

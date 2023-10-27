@@ -40,6 +40,13 @@ struct FMaterialStruct
 	TArray<UMaterialInterface*> Materials;
 };
 
+UENUM(BlueprintType)
+enum class EHierarchyType : uint8
+{
+	HIERARCHY_1 UMETA(DisplayName="Hierarchy_1"),
+	HIERARCHY_2 UMETA(DisplayName="Hierarchy_2")
+};
+
 DECLARE_LOG_CATEGORY_EXTERN(LogTemplateCharacter, Log, All);
 
 UCLASS(config=Game)
@@ -127,7 +134,9 @@ private:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Input, meta=(AllowPrivateAccess = "true"))
 	UInputAction* SearchAction;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Input, meta=(AllowPrivateAccess = "true"))
-	UInputAction* ShowHierarchy;
+	UInputAction* ShowHierarchy_1;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Input, meta=(AllowPrivateAccess = "true"))
+	UInputAction* ShowHierarchy_2;
 	
 #pragma endregion _01_SearchDifferentTypes
 	UPROPERTY()
@@ -142,6 +151,9 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=Hierarchy)
 	FAbsorptionChillerHeater AbsorptionChillerHeater_2;
 
-	
+	void ShowHierarchy_01(const FInputActionValue& Value);
+	void ShowHierarchy_02(const FInputActionValue& Value);
+
+	void ShowHierarchy(EHierarchyType _HierarchyType);
 #pragma endregion _02_ParseHierarchy
 };

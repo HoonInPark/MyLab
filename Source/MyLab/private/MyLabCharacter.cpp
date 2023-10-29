@@ -42,6 +42,7 @@ AMyLabCharacter::AMyLabCharacter()
 	Mesh1P->SetRelativeLocation(FVector(-30.f, 0.f, -150.f));
 
 	bIsMatAlreadyChanged = false;
+	bIsMatAlreadyOverlayed = false;
 }
 
 void AMyLabCharacter::BeginPlay()
@@ -178,13 +179,50 @@ auto AMyLabCharacter::ShowHierarchy_02(const FInputActionValue& Value) -> void
 
 void AMyLabCharacter::ShowHierarchy(EHierarchyType _HierarchyType)
 {
+	if (!bIsMatAlreadyChanged) return;
+
+	FAbsorptionChillerHeater* pAbsorptionChillerHeater_temp;
 	switch (_HierarchyType)
 	{
 	case EHierarchyType::HIERARCHY_1:
+		pAbsorptionChillerHeater_temp = &AbsorptionChillerHeater_1;
 		break;
 	case EHierarchyType::HIERARCHY_2:
+		pAbsorptionChillerHeater_temp = &AbsorptionChillerHeater_2;
 		break;
-	default: ;
+	default:
+		pAbsorptionChillerHeater_temp = nullptr;
+		return;
+	}
+
+	ProcessAbsorptionChillerHeater(pAbsorptionChillerHeater_temp);
+}
+
+void AMyLabCharacter::ProcessAbsorptionChillerHeater(const FAbsorptionChillerHeater* _pAbsorptionChillerHeater)
+{
+	ProcessLineGroup(_pAbsorptionChillerHeater->coolingWaterSupplyLineGroup);
+	ProcessLineGroup(_pAbsorptionChillerHeater->coolingWaterReturnLineGroup);
+	ProcessLineGroup(_pAbsorptionChillerHeater->chilledWaterSupplyLineGroup);
+	ProcessLineGroup(_pAbsorptionChillerHeater->chilledWaterReturnLineGroup);
+
+	bIsMatAlreadyOverlayed = !bIsMatAlreadyOverlayed;
+}
+
+void AMyLabCharacter::ProcessLineGroup(TMap<FName, FActorSet> _LineGroup) const
+{
+	for (const auto& Elem : _LineGroup)
+	{
+		for (const auto pActor: Elem.Value.Set)
+		{
+			const auto Actor_Comp = pActor->GetComponentByClass(UStaticMeshComponent::StaticClass());
+			if (const auto SM_Comp = Cast<UStaticMeshComponent>(Actor_Comp))
+			{
+				if (!bIsMatAlreadyOverlayed)
+					SM_Comp->SetOverlayMaterial(Mat_Hierarchy);
+				else
+					SM_Comp->SetOverlayMaterial(nullptr);
+			}
+		}
 	}
 }
 #pragma endregion _02_ParseHierarchy

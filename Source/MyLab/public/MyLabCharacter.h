@@ -14,21 +14,6 @@ class UCameraComponent;
 class UInputAction;
 class UInputMappingContext;
 
-USTRUCT(BlueprintType)
-struct FAbsorptionChillerHeater
-{
-	GENERATED_BODY()
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=Hierarchy)
-	TMap<TSoftObjectPtr<AActor>, FName> coolingWaterSupplyLineGroup;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=Hierarchy)
-	TMap<TSoftObjectPtr<AActor>, FName> coolingWaterReturnLineGroup;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=Hierarchy)
-	TMap<TSoftObjectPtr<AActor>, FName> chilledWaterSupplyLineGroup;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=Hierarchy)
-	TMap<TSoftObjectPtr<AActor>, FName> chilledWaterReturnLineGroup;
-};
-
 USTRUCT(Atomic, BlueprintType)
 struct FMaterialStruct
 {
@@ -38,6 +23,30 @@ struct FMaterialStruct
 	UStaticMeshComponent* SM_Comp;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	TArray<UMaterialInterface*> Materials;
+};
+
+USTRUCT(BlueprintType)
+struct FActorSet
+{
+	GENERATED_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=Hierarchy)
+	TSet<TSoftObjectPtr<AActor>> Set;
+};
+
+USTRUCT(BlueprintType)
+struct FAbsorptionChillerHeater
+{
+	GENERATED_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=Hierarchy)
+	TMap<FName, FActorSet> coolingWaterSupplyLineGroup;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=Hierarchy)
+	TMap<FName, FActorSet> coolingWaterReturnLineGroup;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=Hierarchy)
+	TMap<FName, FActorSet> chilledWaterSupplyLineGroup;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=Hierarchy)
+	TMap<FName, FActorSet> chilledWaterReturnLineGroup;
 };
 
 UENUM(BlueprintType)
@@ -146,6 +155,11 @@ protected:
 	void SearchActor(const FInputActionValue& Value);
 	
 #pragma region _02_ParseHierarchy
+	bool bIsMatAlreadyOverlayed;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=Material)
+	UMaterialInstance* Mat_Hierarchy;
+	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=Hierarchy)
 	FAbsorptionChillerHeater AbsorptionChillerHeater_1;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=Hierarchy)
@@ -155,5 +169,7 @@ protected:
 	void ShowHierarchy_02(const FInputActionValue& Value);
 
 	void ShowHierarchy(EHierarchyType _HierarchyType);
+	void ProcessAbsorptionChillerHeater(const FAbsorptionChillerHeater* _pAbsorptionChillerHeater);
+	void ProcessLineGroup(TMap<FName, FActorSet> _LineGroup) const;
 #pragma endregion _02_ParseHierarchy
 };

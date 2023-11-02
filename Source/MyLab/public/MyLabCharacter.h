@@ -3,6 +3,7 @@
 #pragma once
 
 #include "MyLab.h"
+#include "ML_ParserToCharacter.h"
 #include "GameFramework/Character.h"
 #include "MyLabCharacter.generated.h"
 
@@ -59,7 +60,7 @@ enum class EHierarchyType : uint8
 DECLARE_LOG_CATEGORY_EXTERN(LogTemplateCharacter, Log, All);
 
 UCLASS(config=Game)
-class AMyLabCharacter : public ACharacter
+class AMyLabCharacter : public ACharacter, public IML_ParserToCharacter
 {
 	GENERATED_BODY()
 

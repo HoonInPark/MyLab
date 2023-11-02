@@ -3,7 +3,6 @@
 #include "MyLabCharacter.h"
 
 #include "EngineUtils.h"
-#include "Animation/AnimInstance.h"
 #include "Camera/CameraComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "Components/SkeletalMeshComponent.h"
@@ -200,11 +199,6 @@ void AMyLabCharacter::ShowHierarchy(EHierarchyType _HierarchyType)
 
 void AMyLabCharacter::ProcessAbsorptionChillerHeater(const FAbsorptionChillerHeater* _pAbsorptionChillerHeater)
 {
-	// for (TFieldIterator<TMap<FName, FActorSet>> PropIt(_pAbsorptionChillerHeater->StaticStruct()); PropIt; ++PropIt)
-	{
-		// ProcessLineGroup(PropIt);
-	}
-	
 	bIsMatAlreadyOverlayed = !bIsMatAlreadyOverlayed;
 }
 

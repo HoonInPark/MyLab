@@ -10,10 +10,16 @@ UCLASS(minimalapi)
 class AMyLabGameMode : public AGameModeBase
 {
 	GENERATED_BODY()
+	virtual void BeginPlay() override;
 
 public:
 	AMyLabGameMode();
+
+protected:
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "WebBrowser", Meta = (BlueprintProtected = "true"))
+	TSubclassOf<class UUserWidget> WebBrowserWidgetClass;
+
+	UPROPERTY()
+	class UUserWidget* CurrentWidget;
+
 };
-
-
-

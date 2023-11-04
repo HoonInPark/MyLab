@@ -199,6 +199,12 @@ void AMyLabCharacter::ShowHierarchy(EHierarchyType _HierarchyType)
 
 void AMyLabCharacter::ProcessAbsorptionChillerHeater(const FAbsorptionChillerHeater* _pAbsorptionChillerHeater)
 {
+	/*
+	ProcessLineGroup(_pAbsorptionChillerHeater->coolingWaterSupplyLineGroup);
+	ProcessLineGroup(_pAbsorptionChillerHeater->coolingWaterReturnLineGroup);
+	ProcessLineGroup(_pAbsorptionChillerHeater->chilledWaterSupplyLineGroup);
+	ProcessLineGroup(_pAbsorptionChillerHeater->chilledWaterReturnLineGroup);
+	*/
 	bIsMatAlreadyOverlayed = !bIsMatAlreadyOverlayed;
 }
 

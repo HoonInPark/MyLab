@@ -5,7 +5,10 @@
 #include "MyLab.h"
 #include "ML_ParserToCharacter.h"
 #include "GameFramework/Actor.h"
+#include "Interfaces/IHttpRequest.h"
 #include "ML_JsonParser.generated.h"
+
+class FHttpModule;
 
 UCLASS()
 class MYLAB_API AML_JsonParser : public AActor, public IML_ParserToCharacter
@@ -20,8 +23,11 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
-public:	
-	// Called every frame
-	virtual void Tick(float DeltaTime) override;
-
+public:
+	UFUNCTION()
+	void HttpCall(const FString& _InURL, const FString& _InVerb);
+	void OnResponseReceived(FHttpRequestPtr _Request, FHttpResponsePtr _Response, bool _bWasSuccessful);
+	
+private:
+	FHttpModule* Http;
 };

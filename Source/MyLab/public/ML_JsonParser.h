@@ -30,4 +30,11 @@ public:
 	
 private:
 	FHttpModule* Http;
+
+public:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FString URL;
+	
+	FString GetResponse;
+
 };

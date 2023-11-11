@@ -172,5 +172,9 @@ protected:
 	void ShowHierarchy(EHierarchyType _HierarchyType);
 	void ProcessAbsorptionChillerHeater(const FAbsorptionChillerHeater* _pAbsorptionChillerHeater);
 	void ProcessLineGroup(TMap<FName, FActorSet> _LineGroup) const;
+
+private:
+	virtual void ParseToSend_Implementation(FStaticData _StaticData) override;
+
 #pragma endregion _02_ParseHierarchy
 };

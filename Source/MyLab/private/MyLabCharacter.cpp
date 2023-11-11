@@ -225,4 +225,8 @@ void AMyLabCharacter::ProcessLineGroup(TMap<FName, FActorSet> _LineGroup) const
 		}
 	}
 }
+
+void AMyLabCharacter::ParseToSend_Implementation(FStaticData _StaticData)
+{
+}
 #pragma endregion _02_ParseHierarchy

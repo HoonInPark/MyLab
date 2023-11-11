@@ -4,18 +4,28 @@
 
 #include "MyLab.h"
 #include "ML_ParserToCharacter.h"
-#include "GameFramework/Actor.h"
 #include "Interfaces/IHttpRequest.h"
+#include "Http.h"
+#include "GameFramework/Actor.h"
 #include "ML_JsonParser.generated.h"
 
-class FHttpModule;
+class FJsonObject;
+
+UENUM(BlueprintType)
+enum class EEndPtType : uint8
+{
+	STR UMETA(DisplayName = "STRING"),
+	STR_ARR UMETA(DisplayName = "STRING_ARRAY"),
+	NUM UMETA(DisplayName = "NUMBER")
+};
 
 UCLASS()
 class MYLAB_API AML_JsonParser : public AActor, public IML_ParserToCharacter
 {
 	GENERATED_BODY()
-	
-public:	
+
+public:
+	FHttpModule* Http;
 	// Sets default values for this actor's properties
 	AML_JsonParser();
 
@@ -24,17 +34,12 @@ protected:
 	virtual void BeginPlay() override;
 
 public:
-	UFUNCTION()
-	void HttpCall(const FString& _InURL, const FString& _InVerb);
+	UFUNCTION(BlueprintCallable, Category = "HTTP")
+	void HttpCall(FString _URL, FString _Type);
 	void OnResponseReceived(FHttpRequestPtr _Request, FHttpResponsePtr _Response, bool _bWasSuccessful);
-	
+
+	bool JsonParser(const TSharedRef<TJsonReader<>>& _Reader, EEndPtType _EndPtType);
+
 private:
-	FHttpModule* Http;
-
-public:
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	FString URL;
-	
-	FString GetResponse;
-
+	virtual void ParseToSend_Implementation(FStaticData _StaticData) override;
 };

@@ -2,8 +2,6 @@
 
 
 #include "ML_JsonParser.h"
-#include "HttpModule.h"
-#include "Interfaces/IHttpResponse.h"
 
 namespace EQSDebug
 {
@@ -24,25 +22,54 @@ void AML_JsonParser::BeginPlay()
 {
 	Super::BeginPlay();
 
-	HttpCall(TEXT("http://52.79.98.84/entities"), "GET");
+	HttpCall(TEXT("http://52.79.98.84/entities"), TEXT("GET"));
 }
 
-void AML_JsonParser::HttpCall(const FString& _InURL, const FString& _InVerb)
+void AML_JsonParser::HttpCall(FString _URL, FString _Type)
 {
-	const TSharedRef<IHttpRequest> Request = Http->CreateRequest();
+	TSharedRef<IHttpRequest> Request = Http->CreateRequest();
 	Request->OnProcessRequestComplete().BindUObject(this, &AML_JsonParser::OnResponseReceived);
 
-	Request->SetURL(_InURL);
-	Request->SetVerb(_InVerb); // 인수로 들어갈 수 있는 것들에는 "GET", "POST", "PUT", "DELETE"가 있다.
-	Request->SetHeader(TEXT("Content-Type"), TEXT("application/json"));
+	Request->SetURL(_URL);
+	Request->SetVerb(_Type);
+	Request->SetHeader(TEXT("User-Agent"), "X-UnrealEngine-Agent");
+	Request->SetHeader("Content-Type", TEXT("application/json"));
 	Request->ProcessRequest();
 }
 
 void AML_JsonParser::OnResponseReceived(FHttpRequestPtr _Request, FHttpResponsePtr _Response, bool _bWasSuccessful)
 {
-	TSharedPtr<FJsonObject> JsonObject;
-	const TSharedRef<TJsonReader<>> Reader = TJsonReaderFactory<>::Create(_Response->GetContentAsString());
+	if (200 != _Response->GetResponseCode()) return;
+	const FString ResponseBody = _Response->GetContentAsString();
+	
+	const TSharedRef<TJsonReader<>> Reader = TJsonReaderFactory<>::Create(ResponseBody);
+	JsonParser(Reader, EEndPtType::STR_ARR);
+}
 
-	if (!FJsonSerializer::Deserialize(Reader, JsonObject)) return;
-	GetResponse = *_Response->GetContentAsString();
+bool AML_JsonParser::JsonParser(const TSharedRef<TJsonReader<>>& _Reader, EEndPtType _EndPtType)
+{
+	TSharedPtr<FJsonValue> JsonValue;
+	if (!FJsonSerializer::Deserialize(_Reader, JsonValue)) return false;
+
+	switch (_EndPtType) {
+	case EEndPtType::STR:
+		break;
+	case EEndPtType::STR_ARR:
+		for (auto Iter = JsonValue->AsArray().CreateConstIterator(); Iter; ++Iter)
+		{
+			(*Iter)->AsObject()->Values;
+		}
+		
+		break;
+	case EEndPtType::NUM:
+		break;
+	default: ;
+	}
+	
+	return false;
+}
+
+void AML_JsonParser::ParseToSend_Implementation(FStaticData _StaticData)
+{
+	
 }

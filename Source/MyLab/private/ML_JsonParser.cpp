@@ -41,35 +41,60 @@ void AML_JsonParser::OnResponseReceived(FHttpRequestPtr _Request, FHttpResponseP
 {
 	if (200 != _Response->GetResponseCode()) return;
 	const FString ResponseBody = _Response->GetContentAsString();
-	
+
 	const TSharedRef<TJsonReader<>> Reader = TJsonReaderFactory<>::Create(ResponseBody);
-	JsonParser(Reader, EEndPtType::STR_ARR);
+	JasonParser(Reader, EEndPtType::STR_ARR);
 }
 
-bool AML_JsonParser::JsonParser(const TSharedRef<TJsonReader<>>& _Reader, EEndPtType _EndPtType)
+void AML_JsonParser::JasonParser(const TSharedRef<TJsonReader<>>& _Reader, EEndPtType _EndPtType)
 {
-	TSharedPtr<FJsonValue> JsonValue;
-	if (!FJsonSerializer::Deserialize(_Reader, JsonValue)) return false;
+	FStaticData StaticData;
 
-	switch (_EndPtType) {
-	case EEndPtType::STR:
-		break;
-	case EEndPtType::STR_ARR:
-		for (auto Iter = JsonValue->AsArray().CreateConstIterator(); Iter; ++Iter)
+	TSharedPtr<FJsonValue> JasonValue;
+	if (!FJsonSerializer::Deserialize(_Reader, JasonValue)) return;
+
+	const auto& JasonArr_temp = JasonValue->AsArray();
+	for (auto& JasonVal : JasonArr_temp)
+	{
+		// 다음과 같이 하면 첫번째 층위의 필드에 접근할 수 있다.
+		const auto& JasonMap_temp = JasonVal->AsObject()->Values;
+		ParserInParser(JasonMap_temp, _EndPtType);
+	}
+}
+
+void AML_JsonParser::ParserInParser(const TMap<FString, TSharedPtr<FJsonValue>>& _JsonMap, EEndPtType _EndPtType)
+{
+	for (auto& JasonElem : _JsonMap)
+	{
+		EJson EndPtType;
+		
+		switch (_EndPtType)
 		{
-			(*Iter)->AsObject()->Values;
+		case EEndPtType::STR:
+			EndPtType = EJson::String;
+			break;
+		case EEndPtType::STR_ARR:
+			EndPtType = EJson::Array;
+			break;
+		case EEndPtType::NUM:
+			EndPtType = EJson::Number;
+			break;
+		default: ;
 		}
 		
-		break;
-	case EEndPtType::NUM:
-		break;
-	default: ;
+		if (EndPtType == JasonElem.Value->Type) // 우리의 경우, JasonElem.Value->Type이 Array인 경우를 목적지로 삼는다.
+		{
+			MLLOG_S(Warning)
+		}
+		else if (EJson::Object == JasonElem.Value->Type)
+			ParserInParser(JasonElem.Value->AsObject()->Values, _EndPtType);
 	}
-	
-	return false;
 }
 
-void AML_JsonParser::ParseToSend_Implementation(FStaticData _StaticData)
+void AML_JsonParser::ParserToObject_Implementation(FStaticData _StaticData)
 {
-	
+}
+
+void AML_JsonParser::ParserToCharacter_Implementation(FStaticData _StaticData)
+{
 }

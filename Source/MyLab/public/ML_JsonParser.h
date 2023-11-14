@@ -38,8 +38,10 @@ public:
 	void HttpCall(FString _URL, FString _Type);
 	void OnResponseReceived(FHttpRequestPtr _Request, FHttpResponsePtr _Response, bool _bWasSuccessful);
 
-	bool JsonParser(const TSharedRef<TJsonReader<>>& _Reader, EEndPtType _EndPtType);
-
+	void JasonParser(const TSharedRef<TJsonReader<>>& _Reader, EEndPtType _EndPtType);
+	void ParserInParser(const TMap<FString, TSharedPtr<FJsonValue>>& _JsonMap, EEndPtType _EndPtType);
+	
 private:
-	virtual void ParseToSend_Implementation(FStaticData _StaticData) override;
+	virtual void ParserToObject_Implementation(FStaticData _StaticData) override;
+	virtual void ParserToCharacter_Implementation(FStaticData _StaticData) override;
 };

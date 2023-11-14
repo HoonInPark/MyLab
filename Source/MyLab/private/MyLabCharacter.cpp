@@ -199,12 +199,6 @@ void AMyLabCharacter::ShowHierarchy(EHierarchyType _HierarchyType)
 
 void AMyLabCharacter::ProcessAbsorptionChillerHeater(const FAbsorptionChillerHeater* _pAbsorptionChillerHeater)
 {
-	/*
-	ProcessLineGroup(_pAbsorptionChillerHeater->coolingWaterSupplyLineGroup);
-	ProcessLineGroup(_pAbsorptionChillerHeater->coolingWaterReturnLineGroup);
-	ProcessLineGroup(_pAbsorptionChillerHeater->chilledWaterSupplyLineGroup);
-	ProcessLineGroup(_pAbsorptionChillerHeater->chilledWaterReturnLineGroup);
-	*/
 	bIsMatAlreadyOverlayed = !bIsMatAlreadyOverlayed;
 }
 
@@ -226,7 +220,7 @@ void AMyLabCharacter::ProcessLineGroup(TMap<FName, FActorSet> _LineGroup) const
 	}
 }
 
-void AMyLabCharacter::ParseToSend_Implementation(FStaticData _StaticData)
+void AMyLabCharacter::ParserToCharacter_Implementation(FStaticData _StaticData)
 {
 }
 #pragma endregion _02_ParseHierarchy

@@ -174,7 +174,7 @@ protected:
 	void ProcessLineGroup(TMap<FName, FActorSet> _LineGroup) const;
 
 private:
-	virtual void ParseToSend_Implementation(FStaticData _StaticData) override;
+	virtual void ParserToCharacter_Implementation(FStaticData _StaticData) override;
 
 #pragma endregion _02_ParseHierarchy
 };

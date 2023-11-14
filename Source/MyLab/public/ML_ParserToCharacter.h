@@ -48,5 +48,7 @@ class MYLAB_API IML_ParserToCharacter
 	// Add interface functions to this class. This is the class that will be inherited to implement this interface.
 public:
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category = "Interface")
-	void ParseToSend(FStaticData _StaticData);
+	void ParserToObject(FStaticData _StaticData);
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category = "Interface")
+	void ParserToCharacter(FStaticData _StaticData);
 };

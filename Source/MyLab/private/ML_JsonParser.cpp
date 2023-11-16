@@ -95,7 +95,7 @@ void AML_JsonParser::ParserInParser(const TMap<FString, TSharedPtr<FJsonValue>>&
 			{
 				FString str_temp;
 				if (Elem->TryGetString(str_temp))
-					StaticData.Data.Add(str_temp, _KeyString);
+					StaticData.Data.Add(_KeyString, str_temp);
 			}
 		}
 		else if (EJson::Object == JsonVal_temp->Type)
@@ -105,7 +105,6 @@ void AML_JsonParser::ParserInParser(const TMap<FString, TSharedPtr<FJsonValue>>&
 
 void AML_JsonParser::ParserToObject_Implementation(FStaticData _StaticData)
 {
-	
 }
 
 void AML_JsonParser::ParserToCharacter_Implementation(FStaticData _StaticData)

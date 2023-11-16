@@ -11,10 +11,8 @@ struct FStaticData
 {
 	GENERATED_BODY()
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=Hierarchy)
 	FString Id;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=Hierarchy)
-	TMap<FString, FString> Data;
+	TMultiMap<FString, FString> Data;
 };
 
 // This class does not need to be modified.

@@ -12,23 +12,9 @@ struct FStaticData
 	GENERATED_BODY()
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=Hierarchy)
-	FName equipmentName;
+	FString Id;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=Hierarchy)
-	TArray<FString> connectTo;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=Hierarchy)
-	TArray<FString> lowerConnectedEquipments;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=Hierarchy)
-	TArray<FString> upperConnectedEquipments;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=Hierarchy)
-	TArray<FString> coolingWaterSupplyLineGroup;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=Hierarchy)
-	TArray<FString> coolingWaterReturnLineGroup;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=Hierarchy)
-	TArray<FString> chilledWaterSupplyLineGroup;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=Hierarchy)
-	TArray<FString> chilledWaterReturnLineGroup;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=Hierarchy)
-	TArray<FString> gasSupplyLineGroup;
+	TMap<FString, FString> Data;
 };
 
 // This class does not need to be modified.
@@ -51,4 +37,6 @@ public:
 	void ParserToObject(FStaticData _StaticData);
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category = "Interface")
 	void ParserToCharacter(FStaticData _StaticData);
+
+	// int32 num_cycle{ 1 };
 };

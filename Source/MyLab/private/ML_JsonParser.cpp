@@ -43,31 +43,35 @@ void AML_JsonParser::OnResponseReceived(FHttpRequestPtr _Request, FHttpResponseP
 	const FString ResponseBody = _Response->GetContentAsString();
 
 	const TSharedRef<TJsonReader<>> Reader = TJsonReaderFactory<>::Create(ResponseBody);
-	JasonParser(Reader, EEndPtType::STR_ARR);
+	JsonParser(Reader, EEndPtType::STR_ARR);
 }
 
-void AML_JsonParser::JasonParser(const TSharedRef<TJsonReader<>>& _Reader, EEndPtType _EndPtType)
+void AML_JsonParser::JsonParser(const TSharedRef<TJsonReader<>>& _Reader, EEndPtType _EndPtType)
 {
-	FStaticData StaticData;
+	TSharedPtr<FJsonValue> JsonValue;
+	if (!FJsonSerializer::Deserialize(_Reader, JsonValue)) return;
 
-	TSharedPtr<FJsonValue> JasonValue;
-	if (!FJsonSerializer::Deserialize(_Reader, JasonValue)) return;
-
-	const auto& JasonArr_temp = JasonValue->AsArray();
-	for (auto& JasonVal : JasonArr_temp)
+	const auto& JsonArr_temp = JsonValue->AsArray();
+	for (auto& JsonVal : JsonArr_temp)
 	{
+		JsonVal->AsObject()->TryGetStringField(TEXT("id"), StaticData.Id);
+		
 		// 다음과 같이 하면 첫번째 층위의 필드에 접근할 수 있다.
-		const auto& JasonMap_temp = JasonVal->AsObject()->Values;
-		ParserInParser(JasonMap_temp, _EndPtType);
+		const auto& JsonMap_temp = JsonVal->AsObject()->Values;
+		ParserInParser(JsonMap_temp, _EndPtType);
+		StaticDatas.Add(StaticData);
 	}
+
+	MLLOG_S(Warning)
 }
 
-void AML_JsonParser::ParserInParser(const TMap<FString, TSharedPtr<FJsonValue>>& _JsonMap, EEndPtType _EndPtType)
+void AML_JsonParser::ParserInParser(const TMap<FString, TSharedPtr<FJsonValue>>& _JsonMap, EEndPtType _EndPtType,
+                                    FString _KeyString)
 {
-	for (auto& JasonElem : _JsonMap)
+	for (auto& JsonElem : _JsonMap)
 	{
 		EJson EndPtType;
-		
+
 		switch (_EndPtType)
 		{
 		case EEndPtType::STR:
@@ -81,18 +85,27 @@ void AML_JsonParser::ParserInParser(const TMap<FString, TSharedPtr<FJsonValue>>&
 			break;
 		default: ;
 		}
-		
-		if (EndPtType == JasonElem.Value->Type) // 우리의 경우, JasonElem.Value->Type이 Array인 경우를 목적지로 삼는다.
+
+		const auto& JsonVal_temp = JsonElem.Value;
+		if (EndPtType == JsonVal_temp->Type) // 우리의 경우, JasonElem.Value->Type이 Array인 경우를 목적지로 삼는다.
 		{
-			MLLOG_S(Warning)
+			// 배열과 그것의 키값을 감싸는 중괄호 오브젝트의 키값은 유니크하다.
+			MLLOG(Warning, TEXT(" %s"), *_KeyString)
+			for (auto& Elem : JsonVal_temp->AsArray())
+			{
+				FString str_temp;
+				if (Elem->TryGetString(str_temp))
+					StaticData.Data.Add(str_temp, _KeyString);
+			}
 		}
-		else if (EJson::Object == JasonElem.Value->Type)
-			ParserInParser(JasonElem.Value->AsObject()->Values, _EndPtType);
+		else if (EJson::Object == JsonVal_temp->Type)
+			ParserInParser(JsonVal_temp->AsObject()->Values, _EndPtType, JsonElem.Key);
 	}
 }
 
 void AML_JsonParser::ParserToObject_Implementation(FStaticData _StaticData)
 {
+	
 }
 
 void AML_JsonParser::ParserToCharacter_Implementation(FStaticData _StaticData)

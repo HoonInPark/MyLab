@@ -2,8 +2,8 @@
 
 #pragma once
 
-#include "ML_ParserToCharacter.h"
 #include "MyLab.h"
+#include "ML_ParserToCharacter.h"
 #include "GameFramework/Actor.h"
 #include "ML_ObjectGenerator.generated.h"
 
